@@ -18,7 +18,7 @@ class kbasic_string
 {
 public:
   static const std::size_t npos = -1;
-  using iterator = Elem * ;
+  using iterator = Elem*;
   using const_iterator = const Elem*;
 
   friend kbasic_string operator+(const kbasic_string& lhs, const kbasic_string& rhs)
