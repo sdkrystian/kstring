@@ -1,8 +1,34 @@
 #include <string>
 #include <iostream>
-#include <chrono>
 #include <algorithm>
 #include <type_traits>
+
+template<typename T>
+struct kchar_traits { };
+
+template<>
+struct kchar_traits<char> 
+{
+  using char_type = char;
+  using int_type = int;
+  using off_type = std::size_t;
+  using pos_type = std::size_t;
+
+  static constexpr std::size_t length(const char_type* str)
+  {
+    return std::strlen(str);
+  }
+
+  static constexpr void copy(char_type* dest, const char_type* src, std::size_t count)
+  {
+    std::copy(src, src + count, dest);
+  }
+
+  static constexpr void move(char_type* dest, const char_type* src, std::size_t count)
+  {
+    std::move(src, src + count, dest);
+  }
+};
 
 template<class, class = void>
 struct is_iterator : std::false_type { };
@@ -20,6 +46,9 @@ public:
   static const std::size_t npos = -1;
   using iterator = Elem*;
   using const_iterator = const Elem*;
+  using pointer = Elem*;
+  using reference = Elem&;
+  using const_reference = const Elem&;
 
   friend kbasic_string operator+(const kbasic_string& lhs, const kbasic_string& rhs)
   {
@@ -352,12 +381,12 @@ public:
     return kbasic_string(begin() + pos, begin() + sze);
   }
 
-  Elem& operator[](std::size_t n)
+  reference operator[](std::size_t n)
   {
     return at(n);
   }
 
-  const Elem& operator[](std::size_t n) const
+  const_reference operator[](std::size_t n) const
   {
     return at(n);
   }
@@ -472,12 +501,12 @@ public:
     return !size();
   }
 
-  Elem& at(std::size_t n)
+  reference at(std::size_t n)
   {
     return data()[n];
   }
 
-  const Elem& at(std::size_t n) const
+  const_reference at(std::size_t n) const
   {
     return data()[n];
   }
@@ -539,16 +568,16 @@ private:
     {
       Elem buffer[23];
       Elem size;
-    }
+    } 
     short_string;
     struct
     {
       Elem* ptr;
       std::size_t capacity;
       std::size_t size;
-    }
+    } 
     long_string;
-  }
+  } 
   data_ = {};
 };
 
